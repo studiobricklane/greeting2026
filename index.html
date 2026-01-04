@@ -16,10 +16,17 @@
 
     <style>
         :root {
-            --c-bg: #050810;
-            --c-aurora-1: #00ff9d;
-            --c-aurora-2: #00d2ff;
-            --c-aurora-3: #4a00e0;
+            /* Base Background: Lighter Midnight Navy (+20% Brightness) */
+            --c-bg: #0f1f3d; 
+            
+            /* Aurora Colors: Lighter Pastel Tone (+20% Brightness) */
+            /* Bright Emerald */
+            --c-aurora-1: #33ffbb; 
+            /* Bright Cyan */
+            --c-aurora-2: #4dd2ff; 
+            /* Bright Purple */
+            --c-aurora-3: #8533ff; 
+            
             --c-text: #FFFFFF;
         }
 
@@ -33,64 +40,65 @@
         }
 
         body {
-            background-color: var(--c-bg); /* Deep Navy Base */
+            /* Smooth gradient: Lighter Midnight Blue to Deep Dark */
+            background: linear-gradient(180deg, #0f1f3d 0%, #050a14 100%);
             color: var(--c-text);
             font-family: 'Shippori Mincho', serif;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Background Layers (Restored Aurora) --- */
+        /* --- Background Layers (Fixed) --- */
         .bg-container {
             position: fixed; 
             top: 0; left: 0; width: 100vw; 
             height: 100vh; 
             height: 100dvh; 
             z-index: -2; overflow: hidden;
-            /* Ensure gradients blend smoothly */
-            background: radial-gradient(circle at center, #0b1021 0%, #050810 100%);
+            /* Lighter radial base for depth */
+            background: radial-gradient(circle at center, #1f2d4b 0%, #0a1020 100%);
+            background-size: cover;
+            transform: scale(1.1);
             pointer-events: none;
         }
 
         .aurora-blob {
             position: absolute; border-radius: 50%;
-            filter: blur(100px); opacity: 0.6;
+            filter: blur(120px); 
+            /* Balanced opacity */
+            opacity: 0.6; 
             will-change: transform;
         }
 
-        /* Restored Beautiful Gradients */
+        /* PC Default Positions */
         .blob-1 {
             width: 80vw; height: 80vw;
             background: radial-gradient(circle, var(--c-aurora-1) 0%, transparent 70%);
-            top: -20%; left: -10%; 
-            animation: breathe 14s infinite alternate ease-in-out;
+            top: -20%; left: -10%; animation: breathe 14s infinite alternate ease-in-out;
         }
 
         .blob-2 {
             width: 90vw; height: 90vw;
             background: radial-gradient(circle, var(--c-aurora-2) 0%, transparent 70%);
-            top: -30%; right: -20%; 
-            animation: breathe 18s infinite alternate ease-in-out;
-            mix-blend-mode: screen; /* Key for glowing effect */
+            top: -30%; right: -20%; animation: breathe 18s infinite alternate ease-in-out;
+            mix-blend-mode: screen;
         }
 
         .blob-3 {
             width: 100vw; height: 60vw;
             background: radial-gradient(circle, var(--c-aurora-3) 0%, transparent 80%);
-            bottom: -20%; left: 10%; 
-            opacity: 0.4;
+            bottom: -20%; left: 10%; opacity: 0.4;
             animation: breathe 20s infinite alternate ease-in-out;
         }
 
         @keyframes breathe {
-            0% { transform: scale(1) translate(0,0); opacity: 0.5; }
-            100% { transform: scale(1.1) translate(20px, -20px); opacity: 0.7; }
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.7; }
         }
 
-        /* --- Mobile Background Adjustments --- */
+        /* --- Mobile Background Fixes --- */
         @media (max-width: 768px) {
             .aurora-blob { filter: blur(80px); }
-            /* Ensure coverage on mobile */
             .blob-1 { width: 150vw; height: 150vw; top: -20%; left: -50%; }
             .blob-2 { width: 160vw; height: 160vw; top: 30%; right: -60%; }
             .blob-3 { width: 180vw; height: 150vw; bottom: -20%; left: -40%; opacity: 0.5; }
@@ -229,7 +237,7 @@
 </head>
 <body>
 
-    <!-- Background Layers (Restored Beautiful Aurora) -->
+    <!-- Background Layers (Lighter Aurora) -->
     <div class="bg-container" id="bg-aurora">
         <div class="aurora-blob blob-1"></div>
         <div class="aurora-blob blob-2"></div>
@@ -237,7 +245,7 @@
     </div>
     <div class="noise-overlay"></div>
     
-    <!-- Canvas for 2D Snow (Restored) -->
+    <!-- Canvas for 2D Snow -->
     <canvas id="snow-canvas"></canvas>
 
     <main>
@@ -278,7 +286,7 @@
     </main>
 
     <script>
-        // --- 1. Canvas 2D Snow System (Restored) ---
+        // --- 1. Canvas 2D Snow System ---
         const initSnowSystem = () => {
             const canvas = document.getElementById('snow-canvas');
             const ctx = canvas.getContext('2d');
