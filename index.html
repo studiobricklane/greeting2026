@@ -23,15 +23,18 @@
             --c-text: #FFFFFF;
         }
 
-        /* Global Reset & Box Sizing */
+        /* --- Global Reset & Viewport Lock --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scroll on all devices */
+        }
 
         body {
             background: linear-gradient(180deg, #050810 0%, #0b1021 100%);
             color: var(--c-text);
             font-family: 'Shippori Mincho', serif;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            width: 100%;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
@@ -119,7 +122,7 @@
             font-size: clamp(2rem, 6vw, 5rem); 
             letter-spacing: 0.2em;
             margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(255,255,255,0.4);
-            white-space: nowrap; /* Keep on one line for PC */
+            white-space: nowrap; 
         }
         
         .hero-subtitle {
@@ -164,54 +167,54 @@
 
         /* --- Mobile Overrides (Strict Fixes) --- */
         @media (max-width: 768px) {
-            /* 1. Force Gutter & Layout Safety */
+            /* 1. Reset Section Padding */
             section {
-                padding: 0 20px; /* Force left/right padding */
-                width: 100%;
-                overflow: hidden; /* Prevent horizontal spill */
+                padding: 0 !important;
+                width: 100% !important;
             }
 
-            /* 2. Title Centering & Sizing */
-            .hero-title {
-                font-size: 7vw; 
-                letter-spacing: 0.2em; 
-                white-space: normal; /* Allow wrap on mobile */
-                line-height: 1.4;
-                width: 100%;
-                text-align: center;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            /* 3. Message Optimization */
+            /* 2. Strict Container Protection */
             .message-container {
-                width: 100%;
-                max-width: 100%;
-                padding: 0;
+                width: 90% !important; /* Force 90% width */
+                max-width: 90% !important;
+                margin: 0 auto !important; /* Force center with margin */
+                padding: 0 !important;
             }
 
+            /* 3. Strict Typography & Break Rules */
             .message-text {
-                font-size: 15px; /* Fixed size for readability */
-                line-height: 2.4; 
-                text-align: center; 
-                display: block;
-                width: 100%;
+                font-size: 14px !important; /* Fixed size */
+                line-height: 1.8 !important; /* Relaxed line height */
+                text-align: center !important;
+                display: block !important;
+                width: 100% !important;
                 
-                /* Line Break Control */
-                word-break: keep-all; /* Try to keep words together */
-                overflow-wrap: break-word; /* Break if too long */
+                word-break: keep-all !important; /* No mid-word breaks */
+                overflow-wrap: break-word !important;
             }
 
             .message-lead {
                 font-size: 1.1em;
-                margin-bottom: 2rem;
+                margin-bottom: 1.5rem;
                 display: inline-block;
             }
 
-            /* Ensure closing is centered */
+            /* 4. Title Centering */
+            .hero-title {
+                font-size: 7vw;
+                letter-spacing: 0.2em;
+                white-space: normal;
+                line-height: 1.4;
+                width: 90% !important;
+                margin: 0 auto 1.5rem auto !important;
+                text-align: center !important;
+            }
+            
+            /* Closing Centering */
             #section-closing .anim-target {
-                width: 100%;
-                text-align: center;
+                width: 90% !important;
+                margin: 0 auto !important;
+                text-align: center !important;
             }
         }
     </style>
