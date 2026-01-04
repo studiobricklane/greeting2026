@@ -26,7 +26,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--c-bg);
+            /* Base gradient as a safety net for mobile gaps */
+            background: linear-gradient(180deg, #050810 0%, #0b1021 100%);
             color: var(--c-text);
             font-family: 'Shippori Mincho', serif;
             overflow-x: hidden;
@@ -38,6 +39,8 @@
         .bg-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -2; overflow: hidden;
+            /* Ensure cover on all devices */
+            background-size: cover;
             transform: scale(1.1);
         }
 
@@ -47,6 +50,7 @@
             will-change: transform;
         }
 
+        /* PC Default Positions (Restored) */
         .blob-1 {
             width: 80vw; height: 80vw;
             background: radial-gradient(circle, var(--c-aurora-1) 0%, transparent 70%);
@@ -72,6 +76,33 @@
             100% { transform: scale(1.1); opacity: 0.7; }
         }
 
+        /* --- Mobile Specific Background Fixes --- */
+        @media (max-width: 768px) {
+            .bg-container {
+                /* Fix for mobile browser address bar resizing */
+                height: 100dvh; 
+            }
+            
+            .aurora-blob {
+                filter: blur(80px); /* Slightly reduce blur for performance */
+            }
+
+            /* Drastically increase size to cover vertical screen without gaps */
+            .blob-1 {
+                width: 150vw; height: 150vw;
+                top: -20%; left: -50%;
+            }
+            .blob-2 {
+                width: 160vw; height: 160vw;
+                top: 30%; right: -60%;
+            }
+            .blob-3 {
+                width: 180vw; height: 150vw;
+                bottom: -20%; left: -40%;
+                opacity: 0.5;
+            }
+        }
+
         /* Noise Texture */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -82,11 +113,10 @@
         /* --- Snow Canvas (2D) --- */
         #snow-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; /* Behind text */
-            pointer-events: none;
+            z-index: 0; pointer-events: none;
         }
 
-        /* --- Content Layout --- */
+        /* --- Content Layout (PC Default) --- */
         main {
             position: relative; z-index: 10;
             width: 100%;
@@ -101,11 +131,15 @@
 
         .anim-target { opacity: 0; transform: translateY(30px); }
 
+        /* Typography - PC Default (Restored) */
         .hero-title {
             font-family: 'Montserrat', sans-serif; font-weight: 300;
-            font-size: clamp(2rem, 6vw, 5rem); letter-spacing: 0.2em;
+            font-size: clamp(2rem, 6vw, 5rem); 
+            letter-spacing: 0.2em;
             margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(255,255,255,0.4);
+            white-space: nowrap; /* Keep on one line for PC */
         }
+        
         .hero-subtitle {
             font-family: 'Montserrat', sans-serif; font-size: clamp(1rem, 2vw, 1.5rem);
             letter-spacing: 0.3em; opacity: 0.9;
@@ -136,13 +170,28 @@
             letter-spacing: 0.2em; margin-bottom: 1rem;
         }
         
+        /* Restored Link Style */
         a.closing-sub {
             font-size: 0.9rem; letter-spacing: 0.1em; opacity: 0.8;
             color: inherit; text-decoration: none;
-            transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+            transition: opacity 0.3s ease;
             display: inline-block;
         }
-        a.closing-sub:hover { opacity: 1.0; text-decoration: underline; letter-spacing: 0.12em; }
+        a.closing-sub:hover { opacity: 1.0; text-decoration: underline; }
+
+        /* --- Mobile Typography Overrides --- */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 11vw; /* Prevent overflow on mobile */
+                white-space: normal; /* Allow wrap if absolutely necessary */
+                line-height: 1.2;
+            }
+            .message-text {
+                font-size: 0.95rem; /* Readable size for mobile */
+                text-align: left; /* Better readability for vertical text block */
+                display: inline-block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -204,12 +253,12 @@
             let width, height;
             let particles = [];
             
-            // Mouse state
-            const mouse = { x: -1000, y: -1000, vx: 0, vy: 0, prevX: 0, prevY: 0 };
+            // Interaction state
+            const interaction = { x: -1000, y: -1000, vx: 0, vy: 0, prevX: 0, prevY: 0 };
             
             // Configuration
-            // 変更点: 雪の量を800から180へ大幅に削減し、静寂さを演出
-            const PARTICLE_COUNT = 180;
+            const isMobile = window.innerWidth < 768;
+            const PARTICLE_COUNT = isMobile ? 80 : 180; // Optimize for mobile
             const LAYERS = 3; 
 
             // Resize
@@ -222,15 +271,31 @@
             window.addEventListener('resize', resize);
             resize();
 
-            // Mouse Tracking
+            // --- Interaction Handlers (Mouse & Touch) ---
+            const handleMove = (x, y) => {
+                interaction.x = x;
+                interaction.y = y;
+                interaction.vx = x - interaction.prevX;
+                interaction.vy = y - interaction.prevY;
+                interaction.prevX = x;
+                interaction.prevY = y;
+            };
+
             window.addEventListener('mousemove', (e) => {
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-                mouse.vx = e.clientX - mouse.prevX;
-                mouse.vy = e.clientY - mouse.prevY;
-                mouse.prevX = e.clientX;
-                mouse.prevY = e.clientY;
+                handleMove(e.clientX, e.clientY);
             });
+
+            window.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                handleMove(touch.clientX, touch.clientY);
+            }, { passive: true });
+
+            window.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                interaction.prevX = touch.clientX;
+                interaction.prevY = touch.clientY;
+                handleMove(touch.clientX, touch.clientY);
+            }, { passive: true });
 
             // Particle Class
             class Particle {
@@ -268,38 +333,31 @@
                 }
 
                 update(scrollY) {
-                    // Basic Fall
                     this.x += this.vx;
                     this.y += this.vy;
 
-                    // Soft Wind Interaction
-                    const dx = this.x - mouse.x;
-                    const dy = this.y - mouse.y;
+                    // Soft Interaction
+                    const dx = this.x - interaction.x;
+                    const dy = this.y - interaction.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    
                     const influenceRadius = 200; 
 
                     if (dist < influenceRadius) {
                         const force = (influenceRadius - dist) / influenceRadius;
                         const angle = Math.atan2(dy, dx);
                         
-                        // 非常に弱い反発力
                         const pushX = Math.cos(angle) * force * 0.08;
                         const pushY = Math.sin(angle) * force * 0.08;
-                        
-                        // 非常に弱い追従力
-                        const dragX = mouse.vx * force * 0.005;
-                        const dragY = mouse.vy * force * 0.005;
+                        const dragX = interaction.vx * force * 0.005;
+                        const dragY = interaction.vy * force * 0.005;
 
                         this.vx += pushX + dragX;
                         this.vy += pushY + dragY;
                     }
 
-                    // Friction
                     this.vx += (this.originalVx - this.vx) * 0.015;
                     this.vy += (this.originalVy - this.vy) * 0.015;
 
-                    // Parallax & Wrap
                     let renderY = this.y - (scrollY * this.parallaxFactor);
 
                     if (renderY > height + 10) {
@@ -327,17 +385,14 @@
                     } else {
                         ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
                     }
-                    
                     ctx.fill();
                 }
             }
 
-            // Create Particles
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 particles.push(new Particle());
             }
 
-            // Animation Loop
             const animate = () => {
                 ctx.clearRect(0, 0, width, height);
                 ctx.globalCompositeOperation = 'lighter';
@@ -352,8 +407,8 @@
                 });
 
                 ctx.globalCompositeOperation = 'source-over';
-                mouse.vx *= 0.9;
-                mouse.vy *= 0.9;
+                interaction.vx *= 0.9;
+                interaction.vy *= 0.9;
 
                 requestAnimationFrame(animate);
             };
