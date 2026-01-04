@@ -26,22 +26,25 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            /* Base gradient as a safety net for mobile gaps */
             background: linear-gradient(180deg, #050810 0%, #0b1021 100%);
             color: var(--c-text);
             font-family: 'Shippori Mincho', serif;
             overflow-x: hidden;
             width: 100%;
+            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Background Layers (Aurora) --- */
+        /* --- Background Layers (Fixed) --- */
         .bg-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            position: fixed; 
+            top: 0; left: 0; width: 100vw; 
+            height: 100vh; 
+            height: 100dvh; 
             z-index: -2; overflow: hidden;
-            /* Ensure cover on all devices */
             background-size: cover;
             transform: scale(1.1);
+            pointer-events: none;
         }
 
         .aurora-blob {
@@ -50,7 +53,7 @@
             will-change: transform;
         }
 
-        /* PC Default Positions (Restored) */
+        /* PC Default Positions */
         .blob-1 {
             width: 80vw; height: 80vw;
             background: radial-gradient(circle, var(--c-aurora-1) 0%, transparent 70%);
@@ -76,31 +79,12 @@
             100% { transform: scale(1.1); opacity: 0.7; }
         }
 
-        /* --- Mobile Specific Background Fixes --- */
+        /* --- Mobile Background Fixes --- */
         @media (max-width: 768px) {
-            .bg-container {
-                /* Fix for mobile browser address bar resizing */
-                height: 100dvh; 
-            }
-            
-            .aurora-blob {
-                filter: blur(80px); /* Slightly reduce blur for performance */
-            }
-
-            /* Drastically increase size to cover vertical screen without gaps */
-            .blob-1 {
-                width: 150vw; height: 150vw;
-                top: -20%; left: -50%;
-            }
-            .blob-2 {
-                width: 160vw; height: 160vw;
-                top: 30%; right: -60%;
-            }
-            .blob-3 {
-                width: 180vw; height: 150vw;
-                bottom: -20%; left: -40%;
-                opacity: 0.5;
-            }
+            .aurora-blob { filter: blur(80px); }
+            .blob-1 { width: 150vw; height: 150vw; top: -20%; left: -50%; }
+            .blob-2 { width: 160vw; height: 160vw; top: 30%; right: -60%; }
+            .blob-3 { width: 180vw; height: 150vw; bottom: -20%; left: -40%; opacity: 0.5; }
         }
 
         /* Noise Texture */
@@ -116,11 +100,8 @@
             z-index: 0; pointer-events: none;
         }
 
-        /* --- Content Layout (PC Default) --- */
-        main {
-            position: relative; z-index: 10;
-            width: 100%;
-        }
+        /* --- Content Layout --- */
+        main { position: relative; z-index: 10; width: 100%; }
 
         section {
             height: 100vh; width: 100%;
@@ -131,13 +112,13 @@
 
         .anim-target { opacity: 0; transform: translateY(30px); }
 
-        /* Typography - PC Default (Restored) */
+        /* Typography - PC Default */
         .hero-title {
             font-family: 'Montserrat', sans-serif; font-weight: 300;
             font-size: clamp(2rem, 6vw, 5rem); 
             letter-spacing: 0.2em;
             margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(255,255,255,0.4);
-            white-space: nowrap; /* Keep on one line for PC */
+            white-space: nowrap; 
         }
         
         .hero-subtitle {
@@ -159,9 +140,11 @@
         }
 
         .message-container { max-width: 800px; width: 100%; }
+        
         .message-text {
             font-size: clamp(1rem, 1.8vw, 1.3rem); line-height: 2.8; letter-spacing: 0.15em;
             font-weight: 500; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-align: center; 
         }
         .message-lead { display: block; font-size: 1.2em; margin-bottom: 3rem; }
 
@@ -170,7 +153,6 @@
             letter-spacing: 0.2em; margin-bottom: 1rem;
         }
         
-        /* Restored Link Style */
         a.closing-sub {
             font-size: 0.9rem; letter-spacing: 0.1em; opacity: 0.8;
             color: inherit; text-decoration: none;
@@ -179,17 +161,42 @@
         }
         a.closing-sub:hover { opacity: 1.0; text-decoration: underline; }
 
-        /* --- Mobile Typography Overrides --- */
+        /* --- Mobile Overrides (Strict) --- */
         @media (max-width: 768px) {
+            /* 1. Title Centering */
             .hero-title {
-                font-size: 11vw; /* Prevent overflow on mobile */
-                white-space: normal; /* Allow wrap if absolutely necessary */
-                line-height: 1.2;
+                font-size: 7vw; 
+                letter-spacing: 0.25em; 
+                white-space: normal;
+                line-height: 1.4;
+                width: 100%; /* Ensure full width for centering */
+                margin: 0 0 1.5rem 0;
+                padding: 0;
+                text-align: center;
             }
+            
+            /* 2. Message Layout & Typography */
+            .message-container {
+                width: 85%; /* Gutter */
+                margin: 0 auto; /* Center container */
+            }
+
             .message-text {
-                font-size: 0.95rem; /* Readable size for mobile */
-                text-align: left; /* Better readability for vertical text block */
-                display: inline-block;
+                font-size: 0.9rem; /* 14-15px equivalent */
+                line-height: 2.2; /* Relaxed */
+                text-align: center; 
+                display: block;
+                width: 100%;
+                
+                /* 3. Line Break Control */
+                word-break: keep-all; /* Prevent breaking mid-word */
+                overflow-wrap: break-word; /* Safety net */
+            }
+
+            .message-lead {
+                font-size: 1.1em;
+                margin-bottom: 2rem;
+                display: inline-block; /* Helps with keep-all */
             }
         }
     </style>
@@ -258,7 +265,7 @@
             
             // Configuration
             const isMobile = window.innerWidth < 768;
-            const PARTICLE_COUNT = isMobile ? 80 : 180; // Optimize for mobile
+            const PARTICLE_COUNT = isMobile ? 80 : 180; 
             const LAYERS = 3; 
 
             // Resize
@@ -271,7 +278,7 @@
             window.addEventListener('resize', resize);
             resize();
 
-            // --- Interaction Handlers (Mouse & Touch) ---
+            // --- Interaction Handlers ---
             const handleMove = (x, y) => {
                 interaction.x = x;
                 interaction.y = y;
