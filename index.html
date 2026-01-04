@@ -23,13 +23,14 @@
             --c-text: #FFFFFF;
         }
 
+        /* Global Reset & Box Sizing */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: linear-gradient(180deg, #050810 0%, #0b1021 100%);
             color: var(--c-text);
             font-family: 'Shippori Mincho', serif;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
             width: 100%;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
@@ -118,7 +119,7 @@
             font-size: clamp(2rem, 6vw, 5rem); 
             letter-spacing: 0.2em;
             margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(255,255,255,0.4);
-            white-space: nowrap; 
+            white-space: nowrap; /* Keep on one line for PC */
         }
         
         .hero-subtitle {
@@ -161,42 +162,56 @@
         }
         a.closing-sub:hover { opacity: 1.0; text-decoration: underline; }
 
-        /* --- Mobile Overrides (Strict) --- */
+        /* --- Mobile Overrides (Strict Fixes) --- */
         @media (max-width: 768px) {
-            /* 1. Title Centering */
+            /* 1. Force Gutter & Layout Safety */
+            section {
+                padding: 0 20px; /* Force left/right padding */
+                width: 100%;
+                overflow: hidden; /* Prevent horizontal spill */
+            }
+
+            /* 2. Title Centering & Sizing */
             .hero-title {
                 font-size: 7vw; 
-                letter-spacing: 0.25em; 
-                white-space: normal;
+                letter-spacing: 0.2em; 
+                white-space: normal; /* Allow wrap on mobile */
                 line-height: 1.4;
-                width: 100%; /* Ensure full width for centering */
-                margin: 0 0 1.5rem 0;
-                padding: 0;
+                width: 100%;
                 text-align: center;
+                margin-left: auto;
+                margin-right: auto;
             }
             
-            /* 2. Message Layout & Typography */
+            /* 3. Message Optimization */
             .message-container {
-                width: 85%; /* Gutter */
-                margin: 0 auto; /* Center container */
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
             }
 
             .message-text {
-                font-size: 0.9rem; /* 14-15px equivalent */
-                line-height: 2.2; /* Relaxed */
+                font-size: 15px; /* Fixed size for readability */
+                line-height: 2.4; 
                 text-align: center; 
                 display: block;
                 width: 100%;
                 
-                /* 3. Line Break Control */
-                word-break: keep-all; /* Prevent breaking mid-word */
-                overflow-wrap: break-word; /* Safety net */
+                /* Line Break Control */
+                word-break: keep-all; /* Try to keep words together */
+                overflow-wrap: break-word; /* Break if too long */
             }
 
             .message-lead {
                 font-size: 1.1em;
                 margin-bottom: 2rem;
-                display: inline-block; /* Helps with keep-all */
+                display: inline-block;
+            }
+
+            /* Ensure closing is centered */
+            #section-closing .anim-target {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
